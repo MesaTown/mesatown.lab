@@ -31,7 +31,8 @@
 
     function text(d) {
         if (title) {
-            const a = title.textContent.split(''), b = d.split(''), len = a.length
+            const a = title.textContent.split(''), b = d.split('')
+            let len = a.length
             if (a.length < b.length) len += b.length - a.length
             for (let i = 0; i < len; i++) {
                 (i => {
