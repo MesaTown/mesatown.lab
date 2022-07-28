@@ -1,0 +1,14 @@
+{
+    "entry": "main",
+    "include": [
+        "help",
+        "any",
+        "str",
+        "num",
+        "bool",
+        "get",
+        "set",
+        "rem",
+        "mem"
+    ]
+}
