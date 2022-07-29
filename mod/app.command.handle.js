@@ -1,12 +1,12 @@
 (function() {
-    const clear = 'close'
+    const close = /close|home|town/
     const timing = 100
 
     globalThis.Command = (data, prefix) => {
         parse(data).end(f => {
             const [name, ...args] = f
             if (title.textContent !== prefix) {
-                if (name === clear) text(prefix)
+                if (close.test(name)) text(prefix)
                 else if (lib[title.textContent]) {
                     const argv = [name, ...args]
                     const module = lib[title.textContent]()
@@ -15,16 +15,14 @@
                     if (Alert) alert('Typed too quickly.')
                 }
             } else {
-                if (name === clear) {
-                    /* any script */
+                if (close.test(name)) {
+                    /* any code */
                 } else if (lib[name]) {
                     const module = lib[name]()
                     require(module, args).unsatisfied(() => {
                         if (args.length <= 0) text(name)
                     })
-                } else {
-                    /** */
-                }
+                } else { /** */ }
             }
         })
     }

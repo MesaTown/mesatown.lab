@@ -2,13 +2,11 @@
     "entry": "main",
     "include": [
         "help",
+        "clear",
+        "close",
         "any",
         "str",
         "num",
-        "bool",
-        "get",
-        "set",
-        "rem",
-        "mem"
+        "bool"
     ]
 }

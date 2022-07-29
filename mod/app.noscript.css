@@ -6,7 +6,6 @@
   pointer-events: none;
   white-space: break-spaces;
 }
-
 [data-block-script]::before {
   content: attr(data-block-script);
 }

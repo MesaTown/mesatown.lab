@@ -7,8 +7,8 @@
   overflow: hidden;
   user-select: none;
 }
-
-* textarea, * [contenteditable] {
+* textarea,
+* [contenteditable] {
   outline: none;
   -webkit-user-drag: auto;
   -webkit-user-select: auto;
@@ -19,20 +19,18 @@
   -moz-appearance: none;
   appearance: none;
 }
-
 * [contenteditable]::selection {
-  color: #1f1e22;
-  background: #bbbbbb;
+  color: rgb(31, 30, 34);
+  background: rgb(187, 187, 187);
 }
-
 *::selection {
-  color: #242424;
-  background: #7c7b81;
+  color: rgb(36, 36, 36);
+  background: rgb(124, 123, 129);
 }
 
 html, body {
-  color: #9f999a;
-  background-color: #0f0f10;
+  color: rgb(159, 153, 154);
+  background-color: rgb(15, 15, 16);
 }
 
 body {
@@ -46,7 +44,8 @@ section {
   height: 100vh;
 }
 
-[document] a, [document] article, [document] blockquote, [document] code, [document] data, [document] dd, [document] details, [document] dl, [document] dt, [document] h1, [document] h2, [document] h3, [document] h4, [document] h5, [document] h6, [document] label, [document] li, [document] mark, [document] ol, [document] pre, [document] q, [document] span, [document] textarea, [document] ul, [document] summary {
+[document] a, [document] article, [document] blockquote, [document] code, [document] data, [document] dd, [document] details, [document] dl, [document] dt, [document] h1, [document] h2, [document] h3,
+[document] h4, [document] h5, [document] h6, [document] label, [document] li, [document] mark, [document] ol, [document] pre, [document] q, [document] span, [document] textarea, [document] ul, [document] summary {
   user-select: text;
 }
 
@@ -112,7 +111,6 @@ section {
 .b-5 {
   height: 100%;
 }
-
 .b-5 span {
   width: auto;
 }
@@ -126,13 +124,13 @@ section {
 }
 
 .c-1 {
-  border: 1px solid #151516;
-  background: #0a0a0c;
+  border: 1px solid rgb(21, 21, 22);
+  background: rgb(10, 10, 12);
 }
 
 .c-1 {
-  border: 1px solid #27272a;
-  background: #202022;
+  border: 1px solid rgb(39, 39, 42);
+  background: rgb(32, 32, 34);
 }
 
 .c-2 {
@@ -186,17 +184,19 @@ section {
   opacity: 1;
   animation: 780ms cubic-bezier(0.55, 0.09, 0.68, 0.53) 6.75s both fadeout;
 }
-
 @keyframes fadeout {
-  to {
-    opacity: 0;
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.4;
   }
 }
+
 .z-1 {
   width: 21rem;
   height: 32px;
 }
-
 .z-1[style] {
   width: 22.6rem;
 }
@@ -227,14 +227,14 @@ section {
   padding: 2px 5px;
   min-height: 21px;
   border-radius: 4px;
-  border: 1px solid #171717;
-  color: #818181;
-  background: #151517;
+  border: 1px solid rgb(23, 23, 23);
+  color: rgb(129, 129, 129);
+  background: rgb(21, 21, 23);
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12));
 }
 
 .z-7 {
-  color: #5e5e5e;
+  color: rgb(94, 94, 94);
 }
 
 @media screen and (max-width: 375px) {
