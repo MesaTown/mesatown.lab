@@ -1,0 +1,10 @@
+{
+    "entry": "main",
+    "include": [
+        "help",
+        "mesa",
+        "u",
+        "test"
+    ],
+    "exclude": []
+}
