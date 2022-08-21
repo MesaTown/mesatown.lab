@@ -29,10 +29,12 @@ function main() {
                 for (const entry of Object.entries(parvar)) {
                     const [name, data] = entry
                     aliases.push(name)
-                    data.alias.forEach(f => {
-                        if (!aliases.find(e => e === f))
-                            aliases.push(f)
-                    })
+                    if (data.alias) {
+                        data.alias.forEach(f => {
+                            if (!aliases.find(e => e === f))
+                                aliases.push(f)
+                        })
+                    }
                 }
                 log(aliases.sort().join(', '))
             },
