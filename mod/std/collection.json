@@ -1,0 +1,12 @@
+{
+    "entry": "main",
+    "include": [
+        "clear",
+        "close",
+        "help",
+        "mod",
+        "unmod",
+        "bind"
+    ],
+    "exclude": []
+}

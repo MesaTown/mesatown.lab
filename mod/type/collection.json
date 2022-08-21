@@ -1,0 +1,10 @@
+{
+    "entry": "main",
+    "include": [
+        "any",
+        "str",
+        "num",
+        "bool"
+    ],
+    "exclude": []
+}
