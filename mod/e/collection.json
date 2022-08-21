@@ -1,9 +1,0 @@
-{
-    "entry": "main",
-    "include": [
-        "help",
-        "mesa",
-        "u"
-    ],
-    "exclude": []
-}
