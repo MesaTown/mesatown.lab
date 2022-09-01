@@ -1,6 +1,6 @@
 const meta = {
     help: 'Shows help for the command',
-    short: '',
+    tip: '',
 }
 
 function main() {
@@ -18,9 +18,10 @@ function main() {
                 for (let i = 0; i < entry.length; i++) {
                     const [name, moduleFn] = entry[i]
                     const module = moduleFn()
-                    if (!/^(\.|#)/.test(name))
+                    if (!/^\W/.test(name) && !module.meta.hidden) {
                         help.push(module.meta && module.meta.help && false
                             ? `${name} - ${module.meta.help}` : name)
+                    }
                 }
                 log(help.join(', '))
             }

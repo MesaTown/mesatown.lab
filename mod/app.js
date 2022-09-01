@@ -1,17 +1,33 @@
 (function() {
     globalThis.eval = ['is', 'this', 'a', 'bit', 'dangerous', '?']
-    globalThis.ctrlR = new Function('location.reload()')
     globalThis.query = new Function('s', 'return document.querySelectorAll(s)')
     globalThis.query0 = new Function('s', 'return document.querySelector(s)')
+    globalThis.ctrlR = new Function('location.reload()')
+    globalThis.render = (new Function('return document.querySelector(\'#render\')'))()
+    globalThis.getRender = new Function('return document.querySelector(\'#render\')')
+    globalThis.__version__ = '0.5'
 
-    const end = fmn => { return { e: res => res(fmn) } }
     const mul = (cst, ...value) => console.log(`⋯ ${cst}${value.map(f => `\n  -> ${f}`).join('')}`)
+    const end = (...clk) => { return { e: res => res(clk) } }
+
+    function subfab(...func) {
+        for (let i = 0; i < func.length; i++) {
+            const fab = func[i](), symbols = ['ƒ', '├', '└']
+            if (fab.e) fab.e(n => {
+                console.log(`${symbols[0]} ${func[i].name}`, n.map((f, i, a) => {
+                    return `\n  ${symbols[a.length - 1 !== i ? 1 : 2]} ${f}`
+                }).join(''))
+            })
+        }
+    }
 
     function commandHandle() {
+        const dprefix = 'town'
         const close = /close|home|town/
         const timing = 100
     
-        globalThis.Command = (data, prefix) => {
+        globalThis.__command = (data, prefix) => {
+            if (!prefix) prefix = dprefix
             parse(data).end(f => {
                 const [name, ...args] = f
                 const _title = title.textContent.replace(/\s+/g, '')
@@ -20,7 +36,7 @@
                     if (close.test(name)) {
                         if (module.oncomplete) module.oncomplete()
                         text(prefix)
-                        if (terminalPlaceholder) terminalPlaceholder()
+                        if (__terminal_placeholder) __terminal_placeholder()
                     }
                     else if (lib[_title]) {
                         const argv = [name, ...args]
@@ -37,8 +53,8 @@
                             if (args.length <= 0) {
                                 if (module.onstart) module.onstart()
                                 text(name)
-                                if (terminalPlaceholder && module.meta.short) {
-                                    terminalPlaceholder(module.meta.short)
+                                if (__terminal_placeholder && module.meta.tip) {
+                                    __terminal_placeholder(module.meta.tip)
                                 }
                             }
                         })
@@ -157,7 +173,7 @@
             else { return { unsatisfied: cb => cb() }}
             return { unsatisfied: () => {}}
         }
-        return end('commandhandle')
+        return end(!!globalThis.__command)
     }
     function define() {
         globalThis.StyleDefinition = (entry) => {
@@ -170,7 +186,7 @@
                 style[key] = value
             }
         }
-        return end('define')
+        return end(!!globalThis.StyleDefinition)
     }
     function input() {
         const bindMap = {}
@@ -223,7 +239,7 @@
             }
             return keymap
         }
-        return end('input')
+        return end(!!globalThis.unbind && !!globalThis.bind)
     }
     function library() {
         const lp = new Proxy({}, {
@@ -233,10 +249,10 @@
                 target[name] = value
             },
         })
-    
-        globalThis.Library = function(...src) {
+
+        if (!globalThis.lib) globalThis.lib = lp
+        globalThis.AddLibrary = function(...src) {
             if (!globalThis.glib) globalThis.glib = {}
-            if (!globalThis.lib) globalThis.lib = lp
             if (typeof src !== 'object') src = [src]
             for (let i = 0; i < src.length; i++) {
                 /^\.\//.test(src[i])
@@ -251,7 +267,6 @@
             const script = await fetch(url).then(r => r.text())
             return `(()=>{${script};globalThis.lib.${name}=${main}})()`.replace(/\r\n\s+/g, '\r\n ')
         }
-    
         async function add(src) {
             if (/\.js$/.test(src)) {
                 create(await get(src))
@@ -291,40 +306,45 @@
             node.remove()
         }
 
-        return end('library')
+        return end(!!globalThis.AddLibrary)
     }
     function logger() {
-        const defaultDelay = 6750
+        const defaultDur = 6750
+        // const loc = /(http(s)?)?:(\/{2})?([^ \u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff\u002f]+)(\/)([\S]+)?/g
         globalThis.Log = []
-        globalThis.Logger = (text, attr) => {
+        globalThis.__logger = (text, attr) => {
             function create(content, options, parent) {
                 if (typeof content === 'undefined' && typeof options !== 'undefined') return
-                options.delay = options.delay ?? defaultDelay
+                options.duration = options.duration ?? defaultDur
                 const n = document.createElement(text.tagName)
                 for (let i = 0; i < attr.length; i++) {
                     n.setAttribute(attr[i], text.getAttribute(attr[i]))
                 }
-                n.style.setProperty('animation', style.exist('fade') && options.delay > 0
+                n.style.setProperty('animation', style.exist('fade') && options.duration > 0
                     ? `780ms cubic-bezier(0.55, 0.09, 0.68, 0.53) ${
-                        options.delay, keyframe = style.getProperty('fade')
+                        options.duration, keyframe = style.getProperty('fade')
                     }ms both ${keyframe}` : 'none')
                 if (options.white) n.style.setProperty('white-space', options.white === 'break' ? 'pre-line' : 'nowrap')
+                if (options.name) n.id = options.name
                 if (options) Object.keys(options).forEach(f => n.style.setProperty(f, options[f]))
-                n.textContent = content
+                options.html ? n.innerHTML = content : n.textContent = content
                 Log.push(n)
                 parent.appendChild(n)
             }
             if (typeof text === 'string') text = document.querySelector(text)
             try {
                 if (text.tagName) {
-                    const parent = text.parentNode, opts = { delay: defaultDelay, white: 'break' }
-                    globalThis.log = (...data) => create(data.join(', '), opts, parent)
-                    globalThis.deb = (data, options = opts) => create(data, options, parent)
+                    const parent = text.parentNode, opts = { duration: defaultDur, white: 'break' }
+                    globalThis.log = (...data) => create(data.join(), opts, parent)
+                    globalThis.deb = (data, options = { ...opts, html: true }) => create(data, options, parent)
                     text.remove()
                 }
             } catch { /** */ }
         }
-        globalThis.Scrolling = (target, alway = false) => {
+        return end(!!globalThis.__logger)
+    }
+    function roll() {
+        globalThis.__scroll = (target, alway = false) => {
             const elems = document.querySelectorAll(target),
             scroll = obj => obj.scrollTo(obj.scrollWidth, obj.scrollHeight),
             track1 = obj => obj.children.length > 0 ? track1(obj.children[0]) : obj
@@ -335,13 +355,13 @@
                 })
             }
         }
-        return end('logger')
+        return end(!!globalThis.__scroll)
     }
     function terminal() {
         const blank = String.fromCharCode(65279)
         let defaultValue, placeholder
 
-        globalThis.Terminal = function(text, ph) {
+        globalThis.__terminal = function(text, ph) {
             const terminal = document.querySelector(text)
             placeholder = document.querySelector(ph)
             defaultValue = placeholder.getAttribute('data-placeholder')
@@ -374,7 +394,7 @@
                 } else if (e.which === 13) {
                     e.preventDefault()
                     if (/\S+/.test(terminal.textContent)) {
-                        Command(terminal.textContent, 'town')
+                        __command(terminal.textContent)
                         terminal.textContent = ''
                     }
                 }
@@ -384,22 +404,49 @@
                 document.execCommand('insertHTML', false, (e.originalEvent || e).clipboardData.getData('text/plain'))
             })
         }
-        globalThis.terminalPlaceholder = function(content = null) {
+        globalThis.__terminal_placeholder = function(content = null) {
             placeholder.setAttribute('data-placeholder', content ?? defaultValue)
         }
-        return end('terminal')
+        globalThis.typein = function(data) {
+            console.log(data)
+            __command(data)
+        }
+        return end(!!globalThis.__terminal && !!globalThis.__terminal_placeholder && !!globalThis.typein)
+    }
+    function linked() {
+        let _modal
+        globalThis.__link_modal = function(modal, buttons = []) {
+            _modal = query0(modal)
+            const [y, n] = [query0(buttons[0]), cancel = query0(buttons[1])]
+            y.addEventListener('click', () => {
+                const url = _modal.querySelector('[is=\'modal-url\']').textContent
+                window.open(url, '_blank')
+                _modal.dataset.modalState = 0
+            })
+            n.addEventListener('click', () => _modal.dataset.modalState = 0)
+        }
+        globalThis.FloatLinkModal = function(url) {
+            const urlcpnt = _modal.querySelector('[is=\'modal-url\']')
+            urlcpnt.textContent = url
+            _modal.dataset.modalState = 1 
+        }
+        return end(!!globalThis.__link_modal && !!globalThis.FloatModal)
     }
 
     document.addEventListener('DOMContentLoaded', d => {
+        if (platform.version.indexOf('0.0.1') != -1) {
+            const len = query('link').length + query('script').length
+            console.info(`%c⠀⠀loaded%c ${
+                String(len).length === 1 ? `0${len}` : len
+            }%csources`,
+                'color: rgb(195, 195, 195); background: rgb(5, 7, 7)',
+                'color: rgb(5, 7, 7); background: rgb(246, 247, 250)',
+                'color: rgb(195, 195, 195); background: rgb(5, 7, 7)')
+        }
         mul(`mt.node${d.target.nodeName}`, d.type, d.returnValue)
         //#region
         console.groupCollapsed('mt?.list')
-        logger().e(n => mul(`app?.${n}`, !!globalThis.Logger && !!globalThis.Scrolling))
-        define().e(n => mul(`app?.${n}`, !!globalThis.StyleDefinition))
-        input().e(n => mul(`app?.${n}`, !!globalThis.unbind && !!globalThis.bind))
-        library().e(n => mul(`app?.${n}`, !!globalThis.Library))
-        commandHandle().e(n => mul(`app?.${n}`, !!globalThis.Command))
-        terminal().e(n => mul(`app?.${n}`, !!globalThis.Terminal && !!globalThis.terminalPlaceholder))
+        subfab(logger, roll, define, input, library, linked, commandHandle, terminal)
         console.groupEnd()
         //#endregion
         bind('@enter', () => {
@@ -410,17 +457,35 @@
     window.onload = d => {
         mul(`mt.node${d.target.nodeName}`, d.type, d.returnValue)
         /** +++ */
-        StyleDefinition({ fade: 'fadeout' })
-        Logger('#logger', ['class', 'style'])
-        Library('./mod/std/collection.json', './mod/e/collection.json')
-        Terminal('[is*=\'terminal\']', '[is*=\'placeholder\']')
-        Scrolling('[is*=\'scroll\']', true)
-        
-        deb('⚠ The bug has been found where elements are not visible when scrolling in Safari.', {
-            color: 'rgb(136, 55, 56)',
-            delay: 0,
-        })
+        StyleDefinition({ fade: 'fadeoutmsg' })
+        __logger('[is*=\'logger\']', ['class', 'style'])
+        __terminal('[is*=\'terminal\']', '[is*=\'placeholder\']')
+        __scroll('[is*=\'scroll\']', true)
+        AddLibrary('./mod/e/readme.js')
+        __link_modal('[is*=\'modal link\']', ['[is*=\'modal-0\']', '[is*=\'modal-1\']'])
+
+        if (platform.name.indexOf('Safari') != -1 && query0('body').dataset.framework === 'pure') {
+            console.warn('The bug has been found where elements are not visible when scrolling in Safari.')
+            deb('⚠ The bug has been found where elements are not visible when scrolling in Safari.', {
+                color: 'rgb(136, 55, 56)',
+                duration: 0,
+            })
+        }
     }
+
+    function hook(e) {
+        e.preventDefault()
+        FloatLinkModal(e.target.href)
+    }
+
+    setInterval(function() {
+        const a = query('a')
+        for (let i = 0; i < a.length; i++) {
+            if (!a[i].onclick || a[i].onclick !== hook) {
+                a[i].onclick = hook
+            }
+        }
+    }, 10)
     setInterval(function() {
         try {
             if (typeof globalThis.eval !== 'object' && !Array.isArray(globalThis.eval))

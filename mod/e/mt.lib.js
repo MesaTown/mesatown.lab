@@ -1,26 +1,28 @@
 const meta = {
     help: 'Shows the history to be continuously developed',
-    short: '{str:type}',
-    version: '0.4',
+    tip: '{str:type}',
 }
 
-function addLib(name, data) {
+function addVModule(name, data) {
     function main() { return data }
     if (Array.isArray(name)) {
         name.forEach(f => lib[f] = main)
     } else lib[name] = main
 }
 
+const conditionRegex = /^(\/|-{2}|:)(.+)/
+let timecount = 0
+
 function main() {
     const parvar = {
         info: {
             alias: ['i'],
             info() {
-                log(`In version ${meta.version}
-                    \r\nadded Bind (for details, use [help bind])
-                    \r\nApostrophes and quotes are no longer the same thing.
-                    Input box has been expanded to make it easier to see.`)
-            },
+                log(`In version ${globalThis.__version__}
+                    \r\nAnnoying but readme added here
+                    \r\nChange the meta variable in the script from SHORT to TIP
+                    \r\nLinks via anchor tags display a warning window`)
+            }
         },
         help: {
             alias: ['?'],
@@ -37,10 +39,10 @@ function main() {
                     }
                 }
                 log(aliases.sort().join(', '))
-            },
+            }
         },
-        'nodes': {
-            doc: () => {
+        nodes: {
+            doc() {
                 console.groupCollapsed('⋯ mt.node')
                 console.log(document)
                 console.log(sessionStorage)
@@ -48,29 +50,103 @@ function main() {
                 console.groupEnd()
             }
         },
+        qload: {
+            quick() {
+                AddLibrary(
+                    './mod/type/collection.json',
+                    './mod/e/add.js',
+                    './mod/e/sub.js',
+                    './mod/e/mul.js',
+                    './mod/e/div.js',
+                    './mod/e/test.js',
+                )
+            }
+        },
+        get: {
+            run(...args) {
+                const [key, condition] = args
+                if (conditionRegex.test(condition)) {
+                    const property = conditionRegex.exec(condition)[2]
+                    switch(property) {
+                        default: break
+                        case 'local':
+                            if (localStorage.getItem(key)) {
+                                log(`Get the value from ${key}::*${property}\n> ${
+                                    localStorage.getItem(key)
+                                }`)
+                            } break
+                        case 'session':
+                            if (sessionStorage.getItem(key)) {
+                                log(`Get the value from ${key}::*${property}\n> ${
+                                    sessionStorage.getItem(key)
+                                }`)
+                            } break
+                    }
+                }
+            }
+        },
+        set: {
+            run(...args) {
+                const [key, value, condition] = args
+                if (conditionRegex.test(condition)) {
+                    const property = conditionRegex.exec(condition)[2]
+                    switch(property) {
+                        default: break
+                        case 'local':
+                            if (localStorage.getItem(key)) {
+                                localStorage.setItem(key, value)
+                            } break
+                        case 'session':
+                            if (sessionStorage.getItem(key)) {
+                                sessionStorage.setItem(key, value)
+                            } break
+                    }
+                    log(`The value ${value} was assigned to ${key}::*${property}`)
+                }
+            }
+        },
         version: {
             alias: ['ver'],
             version() {
-                log(`v${meta.version}`)
-            },
+                log(`v${globalThis.__version__}`)
+            }
         }
     }
 
-    addLib('.mintchoco', {
-        meta: { help: 'don\'t ask me' },
-        execute: () => log('I saw something in chocolate.\nThat is alien food?'),
+    addVModule(['now', 'time'], {
+        meta: { help: 'Display the current time' },
+        execute: () => {
+            function tds(num) {
+                return String(num).length === 1
+                    ? num = `0${num}` : num
+            }
+            function getNow() {
+                const now = new Date(),
+                merid = now.getHours() <= 12 ? 'am' : 'pm',
+                hours = tds(now.getHours() > 12 ? now.getHours() - 12 : now.getHours()),
+                minutes = tds(now.getMinutes()),
+                seconds = tds(now.getSeconds())
+                return `${merid} ${hours}:${minutes}:${seconds}`
+            }
+            const count = timecount
+            deb(getNow(), {
+                name: `time${count}`,
+                duration: 0, html: true,
+                height: '28pt',
+                color: 'rgb(181, 181, 181)',
+                'font-size': '16pt',
+            })
+            setInterval(() => query0(`#time${count}`).textContent = getNow(), 1)
+            timecount++
+        },
     })
-    addLib('.hawaiipizza', {
-        meta: { help: 'don\'t ask me' },
-        execute: () => log('I can\'t even imagine a hot pineapple'),
+    addVModule('re', {
+        meta: { help: 'Reload the page', hidden: true },
+        execute: () => ctrlR(),
     })
-    addLib('.nft', {
-        meta: { help: 'The NFT' },
-        execute: () => log('Not-Fried Tomatoes look delicious'),
-    })
-    addLib('#type', {
-        meta: { help: 'mod.type.collection' },
-        execute: () => Library('./mod/type/collection.json'),
+    addVModule('reload', {
+        meta: { help: 'Reload the page' },
+        execute: () => ctrlR(),
     })
 
     return {
@@ -84,7 +160,11 @@ function main() {
                 if (alias.filter(f => f === args[0]).length === 1) {
                     for (const v in data) {
                         const l = data[v]
-                        if (typeof l === 'function') l()
+                        if (typeof l === 'function') {
+                            const argv = args
+                            argv.shift()
+                            l(...argv)
+                        }
                     }
                 }
             }

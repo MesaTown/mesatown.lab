@@ -4,7 +4,7 @@ function main() {
     return {
         meta: {
             help: 'Unlink Module',
-            short: '{* | module}',
+            tip: '{* | module}',
         },
         require: ['str'],
         execute: args => {
