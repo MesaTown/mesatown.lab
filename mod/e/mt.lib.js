@@ -19,9 +19,11 @@ function main() {
             alias: ['i'],
             info() {
                 log(`In version ${globalThis.__version__}
-                    \r\nAnnoying but readme added here
-                    \r\nChange the meta variable in the script from SHORT to TIP
-                    \r\nLinks via anchor tags display a warning window`)
+                     ├─ Annoying but readme added here
+                     ├─ Change the meta variable in the script from 
+                     │ ⠀⠀SHORT to TIP
+                     └─ Links via anchor tags display
+                     ⠀⠀⠀ a warning window`)
             }
         },
         help: {
