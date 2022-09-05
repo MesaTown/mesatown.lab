@@ -1,7 +1,0 @@
-{
-    "entry": "main",
-    "include": [
-        "mt"
-    ],
-    "exclude": []
-}
