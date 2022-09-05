@@ -7,7 +7,7 @@
     globalThis.ctrlR = new Function('location.reload()')
     globalThis.render = (new Function('return document.querySelector(\'#render\')'))()
     globalThis.getRender = new Function('return document.querySelector(\'#render\')')
-    globalThis.__version__ = '0.5.4'
+    globalThis.__version__ = '0.5.5'
 
     const mul = (cst, ...value) => console.log(`⋯ ${cst}${value.map(f => `\n  -> ${f}`).join('')}`)
     const end = (...clk) => { return { e: res => res(clk) } }
@@ -333,8 +333,8 @@
                 }
                 n.style.setProperty('animation', style.exist('fade') && options.duration > 0
                     ? `780ms cubic-bezier(0.55, 0.09, 0.68, 0.53) ${
-                        options.duration, keyframe = style.getProperty('fade')
-                    }ms both ${keyframe}` : 'none')
+                        options.duration
+                    }ms both ${style.getProperty('fade')}` : 'none')
                 if (options.white) n.style.setProperty('white-space', options.white === 'break' ? 'pre-line' : 'nowrap')
                 if (options.name) n.id = options.name
                 if (options) Object.keys(options).forEach(f => n.style.setProperty(f, options[f]))
