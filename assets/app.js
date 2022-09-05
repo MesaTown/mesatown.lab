@@ -251,7 +251,9 @@
                 if (value().onload) value().onload()
                 target[name] = value
             },
-        }), options = {}
+        })
+        const options = {}
+        const cdn = 'https://cdn.mesatown.org'
 
         if (!globalThis.lib) globalThis.lib = lp
         globalThis.AddLibrary = function(...src) {
@@ -271,8 +273,10 @@
             return `(()=>{${script};globalThis.lib.${name}=${main}})()`.replace(/\r\n\s+/g, '\r\n ')
         }
         async function add(src) {
+            console.log(src)
             if (/\.js$/.test(src)) {
-                create(await get(src))
+                create(await get(location.hostname !== 'localhost'
+                    ? src.replace(/^\./, cdn) : src))
             } else if (/\.json$/.test(src)) {
                 const temp = [],
                 path = /(.+)\/.+/.exec(src),
@@ -336,7 +340,6 @@
     }
     function logger() {
         const defaultDur = 6750
-        // const loc = /(http(s)?)?:(\/{2})?([^ \u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff\u002f]+)(\/)([\S]+)?/g
         globalThis.Log = []
         globalThis.__logger = (text, attr) => {
             function create(content, options, parent) {
@@ -465,7 +468,7 @@
         __logger('[is*=\'logger\']', ['class', 'style'])
         __terminal('[is*=\'terminal\']', '[is*=\'placeholder\']')
         __scroll('[is*=\'scroll\']', true)
-        AddLibrary('https://cdn.mesatown.org/e/readme.js')
+        AddLibrary('./e/readme.js')
         __link_modal([
             { type: 0, component: query0('[is*=\'modal link\']') },
             { type: 1, details: 'connect', component: query0('[is*=\'modal-0\']') },
