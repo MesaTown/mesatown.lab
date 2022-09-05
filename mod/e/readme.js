@@ -5,8 +5,24 @@ function addVModule(name, data) {
     } else lib[name] = main
 }
 
-function finish() {
-    localStorage.setItem('allow-readme', true)
+function remVModule(name) {
+    let i = 0
+    const t = setInterval(() => {
+        if (lib[name]) delete lib[name]
+        if (!lib[name]) {
+            if (i > 3367) clearInterval(t)
+            i++
+        }
+    }, 10)
+}
+
+function reset() {
+    sessionStorage.removeItem('reset-factory')
+    localStorage.removeItem('allow-readme')
+    localStorage.removeItem('disallow-readme')
+    __terminal_placeholder('{allow|disallow}')
+}
+function finish(condition) {
     AddLibrary('./mod/std/collection.json', './mod/e/collection.json')
     for (let i = 0; i < Log.length; i++) Log[i].remove()
     deb(`<span>
@@ -14,10 +30,16 @@ function finish() {
         <br>Enter <span class="px-1 fw-bold">help</span> to display the commands.
         </span>`, { duration: 0, html: true })
     __terminal_placeholder('help {command?}')
-    setInterval(() => {
-        if (lib.allow) delete lib.allow
-        if (lib.readme) delete lib.readme
-    }, 10)
+    remVModule('readme')
+    remVModule('allow')
+    remVModule('disallow')
+    if (/^not\s.+/.test(condition)) {
+        const [_, iglibs] = condition.split(/\s/)
+        iglibs.split(/;/).forEach(f => {
+            remVModule(f)
+        })
+        localStorage.setItem('allow-readme', false)
+    } else localStorage.setItem('allow-readme', true)
 }
 
 function main() {
@@ -26,8 +48,8 @@ function main() {
         require: ['str*'],
         execute: () => {},
         onload: () => {
-            if (localStorage.getItem('allow-readme') !== 'true') {
-                __terminal_placeholder('{allow}')
+            if (sessionStorage.getItem('reset-factory') === 'true' || !localStorage.getItem('allow-readme')) {
+                reset()
                 deb(`<div class="d-flex">
                     <h3 style="font-size: calc(1rem + 0.4vw)">What is Mesa Town</h3>
                     It started with soyhi\'s personal project.
@@ -47,8 +69,8 @@ function main() {
                     <h4 class="fs-6" style="font-size: calc(1rem + 0.4vw)">2. THIRD-PARTY ────</h4>
                     The third-party libraries used for the web are as follows:
                     <div class="ms-4">
-                    Bootstrap ─ <a href="https://getbootstrap.com/docs/5.2/about/license" target="_blank">view license</a>
-                    <br>platform.js ─ <a href="https://github.com/bestiejs/platform.js/blob/master/LICENSE" target="_blank">view license</a>
+                    Bootstrap ─ <a href="https://getbootstrap.com/docs/5.2/about/license" class="text-decoration-none" target="_blank">view license</a>
+                    <br>platform.js ─ <a href="https://github.com/bestiejs/platform.js/blob/master/LICENSE" class="text-decoration-none" target="_blank">view license</a>
                     </div>
                     </div>
                     <div class="d-flex flex-column mt-3">
@@ -80,7 +102,11 @@ function main() {
                     meta: { tip: '' },
                     execute: () => finish(),
                 })
-            } else finish()
+                addVModule(['disallow'], {
+                    meta: { tip: '' },
+                    execute: () => finish('not bind;mod;unmod'),
+                })
+            } else finish(localStorage.getItem('allow-readme') === 'false' ? 'not bind;mod;unmod' : null)
         }
     }
 }

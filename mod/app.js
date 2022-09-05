@@ -5,7 +5,7 @@
     globalThis.ctrlR = new Function('location.reload()')
     globalThis.render = (new Function('return document.querySelector(\'#render\')'))()
     globalThis.getRender = new Function('return document.querySelector(\'#render\')')
-    globalThis.__version__ = '0.5'
+    globalThis.__version__ = '0.5.1'
 
     const mul = (cst, ...value) => console.log(`⋯ ${cst}${value.map(f => `\n  -> ${f}`).join('')}`)
     const end = (...clk) => { return { e: res => res(clk) } }
@@ -13,11 +13,13 @@
     function subfab(...func) {
         for (let i = 0; i < func.length; i++) {
             const fab = func[i](), symbols = ['ƒ', '├', '└']
-            if (fab.e) fab.e(n => {
-                console.log(`${symbols[0]} ${func[i].name}`, n.map((f, i, a) => {
-                    return `\n  ${symbols[a.length - 1 !== i ? 1 : 2]} ${f}`
-                }).join(''))
-            })
+            try {
+                if (fab.e) fab.e(n => {
+                    console.log(`${symbols[0]} ${func[i].name}`, n.map((f, i, a) => {
+                        return `\n  ${symbols[a.length - 1 !== i ? 1 : 2]} ${f}`
+                    }).join(''))
+                })
+            } catch { /** */ }
         }
     }
 
@@ -173,7 +175,6 @@
             else { return { unsatisfied: cb => cb() }}
             return { unsatisfied: () => {}}
         }
-        return end(!!globalThis.__command)
     }
     function define() {
         globalThis.StyleDefinition = (entry) => {
@@ -308,6 +309,29 @@
 
         return end(!!globalThis.AddLibrary)
     }
+    function linked() {
+        let _parent, _modal
+        globalThis.__link_modal = function(components = [], detailCallback = {}) {
+            components.forEach(f => {
+                if (f.type === 0) {
+                    _parent = f.component.parentElement
+                    _modal = f.component
+                    f.component.remove()
+                } else if (f.type === 1) {
+                    if (f.component) {
+                        f.component.addEventListener('click', e => {
+                            detailCallback[f.details](e, _modal)
+                        })
+                    }
+                } else { /** */ }
+            })
+        }
+        globalThis.FloatLinkModal = function(url) {
+            _parent.appendChild(_modal)
+            _modal.querySelector('[is=\'modal-url\']').textContent = url
+            _modal.dataset.modalState = 1
+        }
+    }
     function logger() {
         const defaultDur = 6750
         // const loc = /(http(s)?)?:(\/{2})?([^ \u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff\u002f]+)(\/)([\S]+)?/g
@@ -341,7 +365,6 @@
                 }
             } catch { /** */ }
         }
-        return end(!!globalThis.__logger)
     }
     function roll() {
         globalThis.__scroll = (target, alway = false) => {
@@ -355,7 +378,6 @@
                 })
             }
         }
-        return end(!!globalThis.__scroll)
     }
     function terminal() {
         const blank = String.fromCharCode(65279)
@@ -407,30 +429,10 @@
         globalThis.__terminal_placeholder = function(content = null) {
             placeholder.setAttribute('data-placeholder', content ?? defaultValue)
         }
-        globalThis.typein = function(data) {
-            console.log(data)
+        globalThis.ext = function(data) {
             __command(data)
         }
-        return end(!!globalThis.__terminal && !!globalThis.__terminal_placeholder && !!globalThis.typein)
-    }
-    function linked() {
-        let _modal
-        globalThis.__link_modal = function(modal, buttons = []) {
-            _modal = query0(modal)
-            const [y, n] = [query0(buttons[0]), cancel = query0(buttons[1])]
-            y.addEventListener('click', () => {
-                const url = _modal.querySelector('[is=\'modal-url\']').textContent
-                window.open(url, '_blank')
-                _modal.dataset.modalState = 0
-            })
-            n.addEventListener('click', () => _modal.dataset.modalState = 0)
-        }
-        globalThis.FloatLinkModal = function(url) {
-            const urlcpnt = _modal.querySelector('[is=\'modal-url\']')
-            urlcpnt.textContent = url
-            _modal.dataset.modalState = 1 
-        }
-        return end(!!globalThis.__link_modal && !!globalThis.FloatModal)
+        return end(!!globalThis.ext)
     }
 
     document.addEventListener('DOMContentLoaded', d => {
@@ -462,7 +464,19 @@
         __terminal('[is*=\'terminal\']', '[is*=\'placeholder\']')
         __scroll('[is*=\'scroll\']', true)
         AddLibrary('./mod/e/readme.js')
-        __link_modal('[is*=\'modal link\']', ['[is*=\'modal-0\']', '[is*=\'modal-1\']'])
+        __link_modal([
+            { type: 0, component: query0('[is*=\'modal link\']') },
+            { type: 1, details: 'connect', component: query0('[is*=\'modal-0\']') },
+            { type: 1, details: 'cancel', component: query0('[is*=\'modal-1\']') },
+            { type: 1, details: 'cancel', component: query0('[is*=\'modal_blank\']') },
+        ], {
+            cancel: (_e, c) => c.dataset.modalState = 0,
+            connect: (_e, c) => {
+                const url = c.querySelector('[is=\'modal-url\']').textContent
+                window.open(url, '_blank')
+                c.dataset.modalState = 0
+            }
+        })
 
         if (platform.name.indexOf('Safari') != -1 && query0('body').dataset.framework === 'pure') {
             console.warn('The bug has been found where elements are not visible when scrolling in Safari.')

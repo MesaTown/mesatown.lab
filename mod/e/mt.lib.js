@@ -18,12 +18,18 @@ function main() {
         info: {
             alias: ['i'],
             info() {
-                log(`In version ${globalThis.__version__}
-                     ├─ Annoying but readme added here
-                     ├─ Change the meta variable in the script from 
-                     │ ⠀⠀SHORT to TIP
-                     └─ Links via anchor tags display
-                     ⠀⠀⠀ a warning window`)
+                const version = __version__,
+                contents = [
+                    'Fixed small bugs and features',
+                ]
+                log(
+                    `In version ${version}\n`
+                    + contents.map((f, i, a) => {
+                        return a.length - 1 === i
+                        ? f.replace(/^/, '└─ ').replace(/\n/g, '\n ⠀⠀⠀ ')
+                        : f.replace(/^/, '├─ ').replace(/\n/g, '\n│ ⠀⠀')
+                    }).join('\n')
+                )
             }
         },
         help: {
@@ -89,28 +95,26 @@ function main() {
         },
         set: {
             run(...args) {
-                const [key, value, condition] = args
+                let [key, value, condition] = args
                 if (conditionRegex.test(condition)) {
                     const property = conditionRegex.exec(condition)[2]
-                    switch(property) {
-                        default: break
-                        case 'local':
-                            if (localStorage.getItem(key)) {
-                                localStorage.setItem(key, value)
-                            } break
-                        case 'session':
-                            if (sessionStorage.getItem(key)) {
-                                sessionStorage.setItem(key, value)
-                            } break
+                    if (localStorage.getItem(key) && property === 'local') {
+                        if (/^(true|false)/.test(localStorage.getItem(key))) {
+                            value = /^t/.test(value) ? true : false
+                        }
+                        localStorage.setItem(key, value)
+                        log(`The value ${value} was assigned to ${key}::!${property}`)
+                    } else if (property === 'session') {
+                        sessionStorage.setItem(key, value)
+                        log(`The value ${value} was assigned to ${key}::${property}`)
                     }
-                    log(`The value ${value} was assigned to ${key}::*${property}`)
                 }
             }
         },
         version: {
             alias: ['ver'],
             version() {
-                log(`v${globalThis.__version__}`)
+                log(`v${__version__}`)
             }
         }
     }
