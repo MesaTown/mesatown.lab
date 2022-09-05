@@ -7,7 +7,7 @@
     globalThis.ctrlR = new Function('location.reload()')
     globalThis.render = (new Function('return document.querySelector(\'#render\')'))()
     globalThis.getRender = new Function('return document.querySelector(\'#render\')')
-    globalThis.__version__ = '0.5.2'
+    globalThis.__version__ = '0.5.3'
 
     const mul = (cst, ...value) => console.log(`⋯ ${cst}${value.map(f => `\n  -> ${f}`).join('')}`)
     const end = (...clk) => { return { e: res => res(clk) } }
@@ -273,9 +273,9 @@
             return `(()=>{${script};globalThis.lib.${name}=${main}})()`.replace(/\r\n\s+/g, '\r\n ')
         }
         async function add(src) {
+            src = location.hostname !== 'localhost' ? src.replace(/^\./, cdn) : src
             if (/\.js$/.test(src)) {
-                create(await get(location.hostname !== 'localhost'
-                    ? src.replace(/^\./, cdn) : src))
+                create(await get(src))
             } else if (/\.json$/.test(src)) {
                 const temp = [],
                 path = /(.+)\/.+/.exec(src),
