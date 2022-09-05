@@ -463,7 +463,7 @@
         __logger('[is*=\'logger\']', ['class', 'style'])
         __terminal('[is*=\'terminal\']', '[is*=\'placeholder\']')
         __scroll('[is*=\'scroll\']', true)
-        AddLibrary('./e/readme.js')
+        AddLibrary('https://cdn.mesatown.org/e/readme.js')
         __link_modal([
             { type: 0, component: query0('[is*=\'modal link\']') },
             { type: 1, details: 'connect', component: query0('[is*=\'modal-0\']') },
