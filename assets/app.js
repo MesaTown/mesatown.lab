@@ -273,7 +273,6 @@
             return `(()=>{${script};globalThis.lib.${name}=${main}})()`.replace(/\r\n\s+/g, '\r\n ')
         }
         async function add(src) {
-            console.log(src)
             if (/\.js$/.test(src)) {
                 create(await get(location.hostname !== 'localhost'
                     ? src.replace(/^\./, cdn) : src))
