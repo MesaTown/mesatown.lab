@@ -7,7 +7,7 @@
     globalThis.ctrlR = new Function('location.reload()')
     globalThis.render = (new Function('return document.querySelector(\'#render\')'))()
     globalThis.getRender = new Function('return document.querySelector(\'#render\')')
-    globalThis.__version__ = '0.5.3'
+    globalThis.__version__ = '0.5.4'
 
     const mul = (cst, ...value) => console.log(`⋯ ${cst}${value.map(f => `\n  -> ${f}`).join('')}`)
     const end = (...clk) => { return { e: res => res(clk) } }
