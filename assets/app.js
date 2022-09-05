@@ -274,24 +274,7 @@
         }
         async function add(src) {
             src = location.hostname !== 'localhost' ? src.replace(/^\./, cdn) : src
-            if (/\.js$/.test(src)) {
-                create(await get(src))
-            } else if (/\.json$/.test(src)) {
-                const temp = [],
-                path = /(.+)\/.+/.exec(src),
-                config = await fetch(src, options).then(r => r.json())
-                if (config.include) {
-                    for (let i = 0; i < config.include.length; i++) {
-                        const libName = config.include[i]
-                        temp.push(
-                            await get(`${path[path.length - 1]}/${libName}.lib.js`,
-                                libName,
-                                config.entry)
-                        )
-                    }
-                    create(temp.join(';'))
-                }
-            }
+            if (/\.js$/.test(src)) create(await get(src))
         }
         async function addLibrary(opts) {
             const url = new URL(opts.url)
