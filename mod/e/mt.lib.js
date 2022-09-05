@@ -66,7 +66,6 @@ function main() {
                     './mod/e/sub.js',
                     './mod/e/mul.js',
                     './mod/e/div.js',
-                    './mod/e/test.js',
                 )
             }
         },
