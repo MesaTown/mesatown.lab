@@ -25,6 +25,8 @@ The third-party libraries used for the web are as follows:
 > Bootstrap ─ [view license](https://getbootstrap.com/docs/5.2/about/license)
 > 
 > platform.js ─ [view license](https://github.com/bestiejs/platform.js/blob/master/LICENSE)
+> 
+> webtoolkit.sha256.js ─ [view license](http://www.webtoolkit.info/license1/index.html)
 
 
 #### 3. PRIVACY ────
