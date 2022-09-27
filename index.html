@@ -5,13 +5,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Mesa Town Laboratory</title>
         <meta name="title" content="Mesa Town">
-        <meta name="description" content="Big-Ideas on a Big-Table">
-        <meta name="keyword" content="mesatown, project, soyhi">
+        <meta name="description" content="The limits of imagination are endless">
+        <meta name="keyword" content="mesatown, laboratory, project, soyhi">
         <meta name="author" content="soyhi">
         <meta name="color-scheme" content="dark">
         <meta name="theme-color" content="#0f0f10">
         <meta property="og:title" content="Mesa Town">
-        <meta property="og:description" content="It started with soyhi's personal project. I want to make the most of the features available in browser">
+        <meta property="og:description" content="The limits of imagination are endless">
         <meta property="og:type" content="website">
         <meta property="og:url" content="https://mesatown.github.io/">
         <meta property="og:site_name" content="Laboratory">
@@ -21,8 +21,9 @@
         <link rel="stylesheet" href="/assets/xs/bootstrap.min.css">
         <link rel="stylesheet" href="/assets/app.fonts.min.css">
         <link rel="stylesheet" href="/assets/app.main.min.css">
-        <script type="text/javascript" src="/assets/xs/platform.js"></script>
-        <script type="text/javascript" src="/assets/xs/webtoolkit.sha256.js"></script>
+        <script type="text/javascript" src="/assets/xs/platform.min.js"></script>
+        <script type="text/javascript" src="/assets/xs/webtoolkit.sha256.min.js"></script>
+        <script type="text/javascript" src="/assets/xs/moment.min.js"></script>
     </head>
     <body data-framework="bootstrap">
         <noscript><link rel="stylesheet" href="/assets/app.noscript.min.css"></noscript>
@@ -31,11 +32,11 @@
                 <div class="border-1 border-secondary bg-primary rounded-1 ps-2" style="filter: drop-shadow(0 6px 7px var(--shadow)); z-index: 1060" is="cli-window">
                     <div class="d-grid flex-row align-items-center m-auto" style="grid-template-columns: max-content auto; width: var(--term-width); height: max-content">
                         <div class="d-inline-table pt-1 h-100 pe-none ps-ph" style="filter: drop-shadow(0 6px 7px var(--shadow))">
-                            <span class="d-contents align-items-center w-auto" id="command-label" style="text-shadow: var(--repeat)">town</span>
+                            <span class="d-contents align-items-center w-auto" id="cli-label" style="text-shadow: var(--repeat)">town</span>
                         </div>
                         <div class="position-relative mx-2" style="width: calc(100% - 5px); max-height: 50vh">
-                            <span class="position-absolute top-0 bottom-0 py-1 pe-none" is="placeholder" data-placeholder="help {command?}" style="color: rgb(94, 94, 94); transition: all 60ms linear"></span>
-                            <span class="d-block align-items-center py-1" is="terminal scroll" data-block-script="Please refresh after enabling the use of JavaScript." contenteditable="true" spellcheck="false" style="width: calc(100% - 5px); max-height: 50vh; overflow-wrap: break-word; white-space: pre-wrap" tabindex="0"></span>
+                            <span class="position-absolute top-0 bottom-0 py-1 pe-none" is="cli-marker" data-marker="help {command?}" style="color: rgb(94, 94, 94); transition: all 60ms linear"></span>
+                            <span class="d-block align-items-center py-1" is="cli-text scroll" data-block-script="Please refresh after enabling the use of JavaScript." contenteditable="true" spellcheck="false" style="width: calc(100% - 5px); max-height: 50vh; overflow-wrap: break-word; white-space: pre-wrap" tabindex="0"></span>
                         </div>
                     </div>
                 </div>
